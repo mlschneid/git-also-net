@@ -56,7 +56,7 @@ namespace git_also
 
             List<string> commitHashes = message.ToString().Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
 
-            // hash mapped to list of files
+            // commit hash and related files.
             Dictionary<string, List <string>> hashToFileMapping = new Dictionary<string, List<string>>();
 
             foreach(string hash in commitHashes)
@@ -99,19 +99,19 @@ namespace git_also
                         frequency[file] = frequency[file] + 1;   
                 }
             }
-
-            IOrderedEnumerable<string> sortedFrequencyDescending = frequency.Keys.OrderBy(k => frequency[k]);
-            sortedFrequencyDescending.Reverse();
+            
+            List<KeyValuePair<string, int>> sortedPairs = frequency.OrderBy(f => f.Value).ToList();
+            sortedPairs.Reverse();
 
             int limit = System.Math.Min(frequency.Keys.Count, 10);
 
             Console.WriteLine($"{filename} was frequently checked in with:");
-            foreach(string mostFrequent in sortedFrequencyDescending)
-            {
-                Console.WriteLine($"{mostFrequent}");
-            }
 
-            Console.Read();
+            foreach(var item in sortedPairs.Skip(1).Take(limit))
+            {
+                Console.WriteLine($"\t{item.Key} ({item.Value})");
+            }
+            
         }
     }
 }
